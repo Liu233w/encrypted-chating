@@ -33,7 +33,7 @@ public class SecurityConnection {
         this.key = key;
     }
 
-    public void sendData(byte[] data) {
-        socket.getOutputStream()
-    }
+//    public void sendData(byte[] data) {
+//        socket.getOutputStream();
+//    }
 }
