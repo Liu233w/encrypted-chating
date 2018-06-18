@@ -4,20 +4,20 @@ import java.math.BigInteger;
 
 public class RsaKeyPair {
 
-    private RsaPublicKey rsaPublicKey;
+    private RsaKey rsaPublicKey;
 
-    private RsaPrivateKey rsaPrivateKey;
+    private RsaKey rsaPrivateKey;
 
     public RsaKeyPair(BigInteger n, BigInteger e, BigInteger d) {
-        this.rsaPublicKey = new RsaPublicKey(n, e);
-        this.rsaPrivateKey = new RsaPrivateKey(n, d);
+        this.rsaPublicKey = new RsaKey(n, e);
+        this.rsaPrivateKey = new RsaKey(n, d);
     }
 
-    public RsaPublicKey getPublicKey() {
+    public RsaKey getPublicKey() {
         return rsaPublicKey;
     }
 
-    public RsaPrivateKey getPrivateKey() {
+    public RsaKey getPrivateKey() {
         return rsaPrivateKey;
     }
 }

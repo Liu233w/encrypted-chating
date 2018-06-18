@@ -36,21 +36,10 @@ public class RsaCipher {
      * @param key
      * @return
      */
-    public static BigInteger encrypt(BigInteger plain, RsaPublicKey key) {
-        return doRsa(plain, key.getN(), key.getE());
+    public static byte[] encrypt(byte[] plain, RsaKey key) {
+        return doRsa(new BigInteger(plain), key.getN(), key.getE()).toByteArray();
     }
-
-    /**
-     * RSA decrypt
-     *
-     * @param cypher
-     * @param key
-     * @return
-     */
-    public static BigInteger decrypt(BigInteger cypher, RsaPrivateKey key) {
-        return doRsa(cypher, key.getN(), key.getD());
-    }
-
+    
     /**
      * do the calculation (encrypt or decrypt)
      *

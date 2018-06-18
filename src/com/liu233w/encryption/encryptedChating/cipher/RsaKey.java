@@ -2,27 +2,27 @@ package com.liu233w.encryption.encryptedChating.cipher;
 
 import java.math.BigInteger;
 
-public class RsaPrivateKey {
+public class RsaKey {
 
     private BigInteger n;
 
-    private BigInteger d;
+    private BigInteger e;
 
-    public RsaPrivateKey(BigInteger n, BigInteger d) {
+    public RsaKey(BigInteger n, BigInteger e) {
         this.n = n;
-        this.d = d;
+        this.e = e;
     }
 
     public BigInteger getN() {
         return n;
     }
 
-    public BigInteger getD() {
-        return d;
+    public BigInteger getE() {
+        return e;
     }
 
     @Override
     public String toString() {
-        return String.format("[%s,%s]", n.toString(), d.toString());
+        return String.format("[%s,%s]", n.toString(), e.toString());
     }
 }
