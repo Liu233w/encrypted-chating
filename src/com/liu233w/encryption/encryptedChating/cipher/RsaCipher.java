@@ -39,7 +39,7 @@ public class RsaCipher {
     public static byte[] encrypt(byte[] plain, RsaKey key) {
         return doRsa(new BigInteger(plain), key.getN(), key.getE()).toByteArray();
     }
-    
+
     /**
      * do the calculation (encrypt or decrypt)
      *
