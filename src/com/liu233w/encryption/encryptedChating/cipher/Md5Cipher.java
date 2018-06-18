@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
  * Cipher for digital signature
  */
 public class Md5Cipher {
-    public byte[] encrypt(byte[] input) {
+    public static byte[] encrypt(byte[] input) {
         try {
             final MessageDigest md5 = MessageDigest.getInstance("md5");
             md5.update(input);
