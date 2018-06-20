@@ -2,7 +2,7 @@ package com.liu233w.encryption.encryptedChating.client.core;
 
 import com.liu233w.encryption.encryptedChating.cipher.RsaKeyPair;
 
-public class GlobalConfig {
+public class ClientGlobalConfig {
 
     public static volatile String keyServerAddress = "localhost";
 

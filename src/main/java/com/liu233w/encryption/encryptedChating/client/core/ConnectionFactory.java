@@ -32,8 +32,8 @@ public class ConnectionFactory {
         // schema: computer-name:port
         final String localAddr = socket.getLocalAddress().getHostName() + String.valueOf(socket.getLocalPort());
 
-        final KeyClient keyClient = new KeyClient(GlobalConfig.keyServerAddress, GlobalConfig.keyServerPort);
-        keyClient.sendLocalKey(GlobalConfig.localKeyPair.getPublicKey(), localAddr);
+        final KeyClient keyClient = new KeyClient(ClientGlobalConfig.keyServerAddress, ClientGlobalConfig.keyServerPort);
+        keyClient.sendLocalKey(ClientGlobalConfig.localKeyPair.getPublicKey(), localAddr);
         final RsaKey destPublicKey = keyClient.loadTargetKey(host + ":" + String.valueOf(port));
 
         // send des key
@@ -45,7 +45,7 @@ public class ConnectionFactory {
         outputStream.write(0);
         outputStream.flush();
 
-        return new SecurityConnection(socket, desKey, GlobalConfig.localKeyPair.getPrivateKey(), destPublicKey);
+        return new SecurityConnection(socket, desKey, ClientGlobalConfig.localKeyPair.getPrivateKey(), destPublicKey);
     }
 
     /**
@@ -58,11 +58,11 @@ public class ConnectionFactory {
     public static SecurityConnection waitForConnection(int port) throws IOException {
 
         final ServerSocket serverSocket = new ServerSocket(port);
-        final KeyClient keyClient = new KeyClient(GlobalConfig.keyServerAddress, GlobalConfig.keyServerPort);
+        final KeyClient keyClient = new KeyClient(ClientGlobalConfig.keyServerAddress, ClientGlobalConfig.keyServerPort);
 
         // schema: computer-name:port
         final String address = serverSocket.getInetAddress().getHostName() + ":" + String.valueOf(port);
-        keyClient.sendLocalKey(GlobalConfig.localKeyPair.getPublicKey(), address);
+        keyClient.sendLocalKey(ClientGlobalConfig.localKeyPair.getPublicKey(), address);
 
         final Socket socket = serverSocket.accept();
 
@@ -79,9 +79,9 @@ public class ConnectionFactory {
             inputs[beginIdx++] = (byte) read;
         }
         inputs = Arrays.copyOf(inputs, beginIdx);
-        final byte[] decryptedKeyBytes = RsaCipher.encrypt(inputs, GlobalConfig.localKeyPair.getPrivateKey());
+        final byte[] decryptedKeyBytes = RsaCipher.encrypt(inputs, ClientGlobalConfig.localKeyPair.getPrivateKey());
         final DesKey desKey = new DesKey(new BigInteger(decryptedKeyBytes).longValue());
 
-        return new SecurityConnection(socket, desKey, GlobalConfig.localKeyPair.getPrivateKey(), remotePublicKey);
+        return new SecurityConnection(socket, desKey, ClientGlobalConfig.localKeyPair.getPrivateKey(), remotePublicKey);
     }
 }
