@@ -159,37 +159,6 @@ public class DesCipher {
         buildKeySchedule(key.getKey());
     }
 
-    private static String binToUTF(String bin) {
-
-        // Convert back to String
-        byte[] cipheredBytes = new byte[bin.length() / 8];
-        for (int j = 0; j < cipheredBytes.length; j++) {
-            String temp = bin.substring(0, 8);
-            byte b = (byte) Integer.parseInt(temp, 2);
-            cipheredBytes[j] = b;
-            bin = bin.substring(8);
-        }
-
-        String ciphered = new String(cipheredBytes, Charset.forName("utf-8"));
-        return ciphered.trim();
-    }
-
-    private static String utfToBin(String utf) {
-
-        // Convert to binary
-        byte[] bytes = utf.getBytes(Charset.forName("utf-8"));
-
-        StringBuilder bin = new StringBuilder();
-        for (byte aByte : bytes) {
-            int value = aByte;
-            for (int j = 0; j < 8; j++) {
-                bin.append((value & 128) == 0 ? 0 : 1);
-                value <<= 1;
-            }
-        }
-        return bin.toString();
-    }
-
     private static byte[] binToBytes(String bin) {
         return new BigInteger(bin, 2).toByteArray();
     }
@@ -201,12 +170,12 @@ public class DesCipher {
     /**
      * Encrypt a string message with the DES block cipher
      *
-     * @param plaintext plaintext with utf-8 encoding
+     * @param plain plaintext
      * @return encrypted text in bytes
      */
-    public byte[] encrypt(String plaintext) {
+    public byte[] encrypt(byte[] plain) {
 
-        StringBuilder binPlaintext = new StringBuilder(utfToBin(plaintext));
+        StringBuilder binPlaintext = new StringBuilder(bytesToBin(plain));
 
         // Add padding if necessary
         int remainder = binPlaintext.length() % 64;
@@ -244,9 +213,9 @@ public class DesCipher {
      * Decrypt a string message with the DES block cipher
      *
      * @param ciphered : ciphered to decrypt
-     * @return Plaintext message string
+     * @return Plaintext message
      */
-    public String decrypt(byte[] ciphered) {
+    public byte[] decrypt(byte[] ciphered) {
 
         StringBuilder binPlaintext = new StringBuilder(bytesToBin(ciphered));
 
@@ -279,7 +248,7 @@ public class DesCipher {
             binCiphered.append(binCipheredBlock);
         }
 
-        return binToUTF(binCiphered.toString());
+        return binToBytes(binCiphered.toString());
     }
 
     private String encryptBlock(String plaintextBlock) {
