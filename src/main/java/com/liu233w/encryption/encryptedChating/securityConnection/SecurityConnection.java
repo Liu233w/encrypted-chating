@@ -51,6 +51,8 @@ public class SecurityConnection {
     }
 
     public void close() throws IOException {
+        in.close();
+        out.close();
         socket.close();
     }
 
