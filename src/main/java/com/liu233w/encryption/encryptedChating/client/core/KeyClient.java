@@ -34,9 +34,13 @@ public class KeyClient {
      *
      * @param key
      */
-    public void sendLocalKey(RsaKey key) throws IOException {
+    public void sendLocalKey(RsaKey key, String address) throws IOException {
         startConnection();
-        writer.write("s" + key.toString() + "\n");
+        writer.write("save\n");
+        writer.write(address);
+        writer.write("\n");
+        writer.write(key.toString());
+        writer.write("\n");
         writer.flush();
         final String line = reader.readLine();
         assert line.equals("ok") : "Send successfully";
@@ -45,7 +49,9 @@ public class KeyClient {
 
     public RsaKey loadTargetKey(String address) throws IOException {
         startConnection();
-        writer.write("l" + address + "\n");
+        writer.write("load\n");
+        writer.write(address);
+        writer.write("\n");
         writer.flush();
 
         final String line = reader.readLine();

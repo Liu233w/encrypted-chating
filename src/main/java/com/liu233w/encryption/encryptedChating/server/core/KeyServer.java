@@ -1,10 +1,11 @@
 package com.liu233w.encryption.encryptedChating.server.core;
 
-import java.io.*;
-import java.net.InetAddress;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 
 /**
@@ -19,7 +20,6 @@ public class KeyServer {
 
     private BufferedReader reader;
     private OutputStreamWriter writer;
-    private String requestAddr;
 
     /**
      * start server at localhost:port, will block the thread
@@ -34,15 +34,18 @@ public class KeyServer {
             final Socket socket = serverSocket.accept();
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new OutputStreamWriter(socket.getOutputStream());
-            requestAddr = socket.getInetAddress().getHostAddress() + ":" + socket.getPort();
 
             final String s = reader.readLine();
-            if (s.charAt(0) == 's') {
-                handleSave(s.substring(1));
-            } else if (s.charAt(0) == 'l') {
-                handleLoad(s.substring(1));
-            } else {
-                // No error handling
+            switch (s) {
+                case "save":
+                    handleSave();
+                    break;
+                case "load":
+                    handleLoad();
+                    break;
+                default:
+                    // No error handling
+                    break;
             }
 
             writer.flush();
@@ -53,22 +56,25 @@ public class KeyServer {
         }
     }
 
-    private void handleLoad(String address) throws IOException {
+    private void handleLoad() throws IOException {
+        final String address = reader.readLine();
         String res = keys.get(address);
         if (res == null) {
             res = "None";
         }
 
-        System.out.printf("%s - Send key %s value %s\n", requestAddr, address, res);
+        System.out.printf("Load key %s value %s\n", address, res);
 
         writer.write(res);
         writer.write("\n");
     }
 
-    private void handleSave(String key) throws IOException {
-        keys.put(requestAddr, key);
+    private void handleSave() throws IOException {
+        final String address = reader.readLine();
+        final String key = reader.readLine();
+        keys.put(address, key);
 
-        System.out.printf("%s - Save %s", requestAddr, key);
+        System.out.printf("Save key %s value %s", address, key);
 
         writer.write("ok\n");
     }
