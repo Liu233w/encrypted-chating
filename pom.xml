@@ -23,12 +23,21 @@
                 <version>1.6.0</version>
                 <executions>
                     <execution>
-                        <id>key-server</id>
+                        <id>server</id>
                         <goals>
                             <goal>java</goal>
                         </goals>
                         <configuration>
                             <mainClass>com.liu233w.encryption.encryptedChating.server.Program</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>client</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.liu233w.encryption.encryptedChating.client.Program</mainClass>
                         </configuration>
                     </execution>
                 </executions>
@@ -47,6 +56,11 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.beryx</groupId>
+            <artifactId>text-io</artifactId>
+            <version>3.1.4</version>
         </dependency>
     </dependencies>
 
