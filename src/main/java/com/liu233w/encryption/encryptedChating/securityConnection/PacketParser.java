@@ -20,29 +20,30 @@ public class PacketParser {
     private void readHeaders(PushbackInputStream in) throws IOException {
 
         int b;
-        boolean atName = true;
-        final StringBuilder name = new StringBuilder();
-        final StringBuilder value = new StringBuilder();
 
         while ((b = in.read()) != '\n') {
+
+            final StringBuilder name = new StringBuilder();
+            final StringBuilder value = new StringBuilder();
+            boolean atName = true;
+
             in.unread(b);
             while ((b = in.read()) != '\n') {
                 if (atName) {
                     if (b == ':') {
                         atName = false;
                     } else {
-                        name.append(b);
+                        name.append((char) b);
                     }
                 } else {
-                    value.append(b);
+                    value.append((char) b);
                 }
             }
             headers.put(name.toString(), value.toString());
-            atName = true;
         }
 
         final int length = Integer.parseInt(headers.get("Length"));
-        final byte[] data = new byte[length];
+        data = new byte[length];
         int begin = 0;
         while (begin < length) {
             final int read = in.read(data, begin, length - begin);

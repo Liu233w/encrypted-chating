@@ -64,7 +64,7 @@ public class SecurityConnection {
      */
     public void send(byte[] data) throws IOException {
         final byte[] encrypted = cipher.encrypt(data);
-        final byte[] signature = DigitalSignatureProcessor.generate(data, destPublicKey);
+        final byte[] signature = DigitalSignatureProcessor.generate(data, myPrivateKey);
         final String signBase64 = Base64.getEncoder().encodeToString(signature);
 
         new PacketBuilder()
