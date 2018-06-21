@@ -75,7 +75,7 @@ public class ConnectionFactory {
         return new SecurityConnection(socket, desKey, ClientGlobalConfig.localKeyPair.getPrivateKey(), remotePublicKey);
     }
 
-    private static byte[] readDataPackFromStream(InputStream in) throws IOException {
+    public static byte[] readDataPackFromStream(InputStream in) throws IOException {
         // the first 2 bytes are sizes. They specifies the pack size.
 
         final int size = in.read() << 8 & 0x0000ff00 | in.read() & 0x000000ff;
@@ -87,7 +87,7 @@ public class ConnectionFactory {
         return data;
     }
 
-    private static void sendDataPackToStream(OutputStream out, byte[] data) throws IOException {
+    public static void sendDataPackToStream(OutputStream out, byte[] data) throws IOException {
         final int size = data.length;
         out.write((size & 0x0000ff00) >> 8);
         out.write(size & 0x000000ff);
