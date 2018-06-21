@@ -20,6 +20,7 @@ public class KeyServer {
 
     private BufferedReader reader;
     private OutputStreamWriter writer;
+    private Socket socket;
 
     /**
      * start server at localhost:port, will block the thread
@@ -31,7 +32,7 @@ public class KeyServer {
         final ServerSocket serverSocket = new ServerSocket(port);
 
         while (true) {
-            final Socket socket = serverSocket.accept();
+            socket = serverSocket.accept();
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new OutputStreamWriter(socket.getOutputStream());
 
@@ -70,8 +71,10 @@ public class KeyServer {
     }
 
     private void handleSave() throws IOException {
-        final String address = reader.readLine();
+        final String port = reader.readLine();
         final String key = reader.readLine();
+        // read ip from socket
+        final String address = socket.getInetAddress().getHostAddress() + ":" + port;
         keys.put(address, key);
 
         System.out.printf("Save key %s value %s\n", address, key);

@@ -34,10 +34,10 @@ public class KeyClient {
      *
      * @param key
      */
-    public void sendLocalKey(RsaKey key, String address) throws IOException {
+    public void sendLocalKey(RsaKey key, int port) throws IOException {
         startConnection();
         writer.write("save\n");
-        writer.write(address);
+        writer.write(String.valueOf(port));
         writer.write("\n");
         writer.write(key.toString());
         writer.write("\n");
