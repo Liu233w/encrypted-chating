@@ -30,7 +30,9 @@ public class ConfigResolver {
 
         textIO.getTextTerminal().println("Generating RSA keys, please stand by...");
         ClientGlobalConfig.localKeyPair = RsaCipher.generateKey();
-        textIO.getTextTerminal().printf("Successful: %s\n", ClientGlobalConfig.localKeyPair.toString());
+        textIO.getTextTerminal().println("Successful.");
+        textIO.getTextTerminal().printf("Private Key: %s\n", ClientGlobalConfig.localKeyPair.getPrivateKey().toString());
+        textIO.getTextTerminal().printf("Public Key: %s\n", ClientGlobalConfig.localKeyPair.getPublicKey().toString());
 
         ClientGlobalConfig.keyServerAddress = textIO.newStringInputReader()
                 .withDefaultValue("localhost")

@@ -74,7 +74,7 @@ public class KeyServer {
         final String key = reader.readLine();
         keys.put(address, key);
 
-        System.out.printf("Save key %s value %s", address, key);
+        System.out.printf("Save key %s value %s\n", address, key);
 
         writer.write("ok\n");
     }
