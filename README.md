@@ -7,6 +7,15 @@
  Just run `mvn test`
  
 ## Usage
+
+**run `mvn package` before start server or client!**
+
 ### key server
 #### start
-`mvn exec:java@key-server`
+`mvn exec:java@server`
+
+### client
+#### start
+*If you are using windows, use `client.cmd` instead of this command.*
+
+`mvn exec:java@client`
