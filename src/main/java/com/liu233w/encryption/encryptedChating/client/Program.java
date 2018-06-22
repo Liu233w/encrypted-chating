@@ -9,19 +9,19 @@ import java.io.IOException;
 
 public class Program {
     public static void main(String[] args) throws IOException, InterruptedException {
-//        final ConfigResolver configResolver = new ConfigResolver();
-//        configResolver.resolve();
+        final ConfigResolver configResolver = new ConfigResolver();
+        configResolver.resolve();
 
-//        SecurityConnection securityConnection;
-//        if (configResolver.getConnectionKind() == ConfigResolver.ConnectionKind.WaitForConnection) {
-//            System.out.println("Waiting for connection...");
-//            securityConnection = ConnectionFactory.waitForConnection(configResolver.getConnectPort());
-//        } else {
-//            System.out.println("Connecting...");
-//            securityConnection = ConnectionFactory.connectTo(configResolver.getConnectAddress(), configResolver.getConnectPort());
-//        }
+        SecurityConnection securityConnection;
+        if (configResolver.getConnectionKind() == ConfigResolver.ConnectionKind.WaitForConnection) {
+            System.out.println("Waiting for connection...");
+            securityConnection = ConnectionFactory.waitForConnection(configResolver.getConnectPort());
+        } else {
+            System.out.println("Connecting...");
+            securityConnection = ConnectionFactory.connectTo(configResolver.getConnectAddress(), configResolver.getConnectPort());
+        }
 
-        final ChatWindow chatWindow = new ChatWindow(null);
+        final ChatWindow chatWindow = new ChatWindow(securityConnection);
         chatWindow.start();
     }
 }
