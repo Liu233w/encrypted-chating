@@ -4,18 +4,16 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.SimpleTerminalResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.liu233w.encryption.encryptedChating.securityConnection.SecurityConnection;
-import org.beryx.textio.TextIoFactory;
-import org.beryx.textio.TextTerminal;
+import com.liu233w.encryption.encryptedChating.securityConnection.WrongSignatureException;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -26,9 +24,11 @@ public class ChatWindow {
     private TextBox messageBox;
     private StringBuilder messageText;
     private SimpleDateFormat simpleDateFormat;
+    private String destAddress;
 
     public ChatWindow(SecurityConnection connection) {
         this.connection = connection;
+        destAddress = connection.getDestAddress();
         messageText = new StringBuilder("Welcome! Press TAB to move focus between message box and input field\n");
         simpleDateFormat = new SimpleDateFormat(" [yyyy-MM-dd HH:mm:ss] ");
     }
@@ -48,7 +48,15 @@ public class ChatWindow {
         });
 
         final MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
-        textGUI.addWindowAndWait(buildGui(terminalSize));
+        final BasicWindow window = buildGui(terminalSize);
+
+        new Thread(() -> {
+            while (true) {
+                receiveMessage();
+            }
+        }).start();
+
+        textGUI.addWindowAndWait(window);
     }
 
     private BasicWindow buildGui(TerminalSize size) {
@@ -99,18 +107,44 @@ public class ChatWindow {
     private void sendMessage() {
         final String text = chattingInput.getText();
         if (!text.isEmpty()) {
-            System.out.println("not empty");
             chattingInput.setText("");
             addMessageToList("You", text);
+
+            new Thread(() -> {
+                try {
+                    connection.send(stringToUtf8(text));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
     }
 
-    private void addMessageToList(String from, String content) {
+    private synchronized void addMessageToList(String from, String content) {
         messageText.append(from);
         messageText.append(simpleDateFormat.format(new Date()));
         messageText.append("> ");
         messageText.append(content);
         messageText.append('\n');
         messageBox.setText(messageText.toString());
+    }
+
+    private void receiveMessage() {
+        try {
+            final byte[] recv = connection.recv();
+            addMessageToList(destAddress, utf8ToString(recv));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WrongSignatureException e) {
+            addMessageToList(destAddress + "(Unauthorized)", utf8ToString(e.getData()));
+        }
+    }
+
+    private static String utf8ToString(byte[] data) {
+        return new String(data, Charset.forName("utf-8"));
+    }
+
+    private static byte[] stringToUtf8(String str) {
+        return str.getBytes(Charset.forName("utf-8"));
     }
 }

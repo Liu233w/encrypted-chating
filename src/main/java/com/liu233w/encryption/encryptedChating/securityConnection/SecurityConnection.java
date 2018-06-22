@@ -80,15 +80,19 @@ public class SecurityConnection {
      * @throws IOException
      * @throws SignatureException
      */
-    public byte[] recv() throws IOException, SignatureException {
+    public byte[] recv() throws IOException, WrongSignatureException {
         final PacketParser packetParser = new PacketParser(in);
 
         final String signBase64 = packetParser.getHeader("Signature");
         final byte[] signature = Base64.getDecoder().decode(signBase64);
         final byte[] data = cipher.decrypt(packetParser.getData());
-        if (DigitalSignatureProcessor.verify(data, signature, destPublicKey)) {
-            throw new SignatureException("Wrong digital signature");
+        if (!DigitalSignatureProcessor.verify(data, signature, destPublicKey)) {
+            throw new WrongSignatureException("Wrong digital signature", data);
         }
         return data;
+    }
+
+    public String getDestAddress() {
+        return socket.getInetAddress().getHostAddress() + ":" + socket.getPort();
     }
 }

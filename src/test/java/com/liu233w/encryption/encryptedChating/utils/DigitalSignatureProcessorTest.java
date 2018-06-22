@@ -12,7 +12,14 @@ public class DigitalSignatureProcessorTest {
 
     @Test
     public void testEncryptionAndVerify() {
-        final byte[] plain = "Hello world".getBytes(Charset.forName("utf-8"));
+        doTestEncryptionAndVerify("a");
+        doTestEncryptionAndVerify("ab");
+        doTestEncryptionAndVerify("abcde");
+        doTestEncryptionAndVerify("Hello World");
+    }
+
+    public void doTestEncryptionAndVerify(String input) {
+        final byte[] plain = input.getBytes(Charset.forName("utf-8"));
         final RsaKeyPair rsaKeyPair = RsaCipher.generateKey();
 
         final byte[] signature = DigitalSignatureProcessor.generate(plain, rsaKeyPair.getPrivateKey());
