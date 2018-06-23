@@ -12,5 +12,7 @@ public class Program {
 
         final ChatWindow chatWindow = new ChatWindow(configResolver.getConnection());
         chatWindow.start();
+
+        System.exit(0);
     }
 }
