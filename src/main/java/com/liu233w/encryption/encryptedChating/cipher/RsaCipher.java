@@ -1,6 +1,7 @@
 package com.liu233w.encryption.encryptedChating.cipher;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Random;
 
 public class RsaCipher {
@@ -38,7 +39,21 @@ public class RsaCipher {
      */
     public static byte[] encrypt(byte[] plain, RsaKey key) {
         // rsa 的输入不能是负数，因此 plain 的第一个byte不能是负数,需要额外的处理
-        return doRsa(new BigInteger(plain), key.getN(), key.getE()).toByteArray();
+        final boolean negative = plain[0] < 0;
+        if (negative) {
+            // 防止改变原来的数据
+            plain = Arrays.copyOf(plain, plain.length);
+            plain[0] *= -1;
+        }
+
+        final byte[] encrypted = doRsa(new BigInteger(plain), key.getN(), key.getE()).toByteArray();
+
+        // 加密后的结果一定是正数，因此第一个byte也是正数，可以利用这个做判断
+        if (negative) {
+            encrypted[0] *= -1;
+        }
+
+        return encrypted;
     }
 
     /**
