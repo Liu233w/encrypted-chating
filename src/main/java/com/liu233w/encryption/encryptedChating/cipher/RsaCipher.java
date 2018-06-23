@@ -37,6 +37,7 @@ public class RsaCipher {
      * @return
      */
     public static byte[] encrypt(byte[] plain, RsaKey key) {
+        // rsa 的输入不能是负数，因此 plain 的第一个byte不能是负数,需要额外的处理
         return doRsa(new BigInteger(plain), key.getN(), key.getE()).toByteArray();
     }
 
