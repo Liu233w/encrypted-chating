@@ -1,5 +1,6 @@
 package com.liu233w.encryption.encryptedChating.client.ui;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -22,14 +23,12 @@ public class ChatWindow {
     private SecurityConnection connection;
     private TextBox chattingInput;
     private TextBox messageBox;
-    private StringBuilder messageText;
     private SimpleDateFormat simpleDateFormat;
     private String destAddress;
 
     public ChatWindow(SecurityConnection connection) {
         this.connection = connection;
         destAddress = connection.getDestAddress();
-        messageText = new StringBuilder("Welcome! Press TAB to move focus between message box and input field\n");
         simpleDateFormat = new SimpleDateFormat(" [yyyy-MM-dd HH:mm:ss] ");
     }
 
@@ -66,9 +65,9 @@ public class ChatWindow {
         final Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL).setSpacing(1));
 
-        messageBox = new TextBox(messageText.toString())
+        messageBox = new TextBox("Welcome! Press TAB to move focus between message box and input field")
                 .setReadOnly(true)
-                .setVerticalFocusSwitching(true)
+                .setVerticalFocusSwitching(false)
                 .addTo(mainPanel);
 
         chattingInput = new TextBox() {
@@ -121,12 +120,15 @@ public class ChatWindow {
     }
 
     private synchronized void addMessageToList(String from, String content) {
+        final StringBuilder messageText = new StringBuilder();
         messageText.append(from);
         messageText.append(simpleDateFormat.format(new Date()));
         messageText.append("> ");
         messageText.append(content);
-        messageText.append('\n');
-        messageBox.setText(messageText.toString());
+
+        messageBox.addLine(messageText.toString());
+        messageBox.handleKeyStroke(new KeyStroke(KeyType.ArrowDown));
+        messageBox.handleKeyStroke(new KeyStroke(KeyType.ArrowDown));
     }
 
     private void receiveMessage() {
