@@ -65,7 +65,7 @@ public class ConnectionFactory {
 
         // read des key
         final byte[] encryptedDes = readDataPackFromStream(inputStream);
-        final byte[] decryptedKeyBytes = RsaCipher.encrypt(encryptedDes, ClientGlobalConfig.localKeyPair.getPrivateKey());
+        final byte[] decryptedKeyBytes = RsaCipher.decrypt(encryptedDes, ClientGlobalConfig.localKeyPair.getPrivateKey());
         final DesKey desKey = new DesKey(new BigInteger(decryptedKeyBytes).longValue());
 
         // get remote public key

@@ -22,9 +22,9 @@ public class RsaCipherTest {
         final RsaKeyPair rsaKeyPair = new RsaKeyPair(BigInteger.valueOf(3 * 11), BigInteger.valueOf(3), BigInteger.valueOf(7));
 
         assertThat(RsaCipher.encrypt(BigInteger.valueOf(24).toByteArray(), rsaKeyPair.getPublicKey()))
-                .isEqualTo(BigInteger.valueOf(30).toByteArray());
+                .isEqualTo(new byte[]{30, 0});
 
-        assertThat(RsaCipher.encrypt(BigInteger.valueOf(30).toByteArray(), rsaKeyPair.getPrivateKey()))
+        assertThat(RsaCipher.decrypt(new byte[]{30, 0}, rsaKeyPair.getPrivateKey()))
                 .isEqualTo(BigInteger.valueOf(24).toByteArray());
     }
 
@@ -50,6 +50,6 @@ public class RsaCipherTest {
 
     private void doTestEncryptByPrivateKey(byte[] input) {
         final byte[] encrypt = RsaCipher.encrypt(input, randomKey.getPrivateKey());
-        errorCollector.checkThat(RsaCipher.encrypt(encrypt, randomKey.getPublicKey()), equalTo(input));
+        errorCollector.checkThat(RsaCipher.decrypt(encrypt, randomKey.getPublicKey()), equalTo(input));
     }
 }

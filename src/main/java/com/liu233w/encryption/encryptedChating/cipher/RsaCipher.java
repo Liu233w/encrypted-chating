@@ -48,12 +48,32 @@ public class RsaCipher {
 
         final byte[] encrypted = doRsa(new BigInteger(plain), key.getN(), key.getE()).toByteArray();
 
-        // 加密后的结果一定是正数，因此第一个byte也是正数，可以利用这个做判断
-        if (negative) {
-            encrypted[0] *= -1;
+        // 加密后第一个byte有可能是0，必须额外添加一位做判断
+        final byte[] res = Arrays.copyOf(encrypted, encrypted.length + 1);
+        res[res.length - 1] = (byte) (negative ? 1 : 0);
+
+        return res;
+    }
+
+    /**
+     * decrypt
+     *
+     * @param encrypted must be encrypt outputs
+     * @param key
+     * @return
+     */
+    public static byte[] decrypt(byte[] encrypted, RsaKey key) {
+        final byte[] input = Arrays.copyOf(encrypted, encrypted.length - 1);
+
+        final byte[] plain = doRsa(new BigInteger(input), key.getN(), key.getE()).toByteArray();
+
+        if (encrypted[encrypted.length - 1] == 1) {
+            plain[0] *= -1;
+        } else if (encrypted[encrypted.length - 1] != 0) {
+            throw new RuntimeException("Not a valid encrypted format");
         }
 
-        return encrypted;
+        return plain;
     }
 
     /**

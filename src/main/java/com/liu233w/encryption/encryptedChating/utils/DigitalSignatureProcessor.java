@@ -30,7 +30,7 @@ public class DigitalSignatureProcessor {
      */
     public static boolean verify(byte[] plain, byte[] signature, RsaKey key) {
         final byte[] md5 = Md5Cipher.encrypt(plain);
-        final byte[] decryptedMd5 = RsaCipher.encrypt(signature, key);
+        final byte[] decryptedMd5 = RsaCipher.decrypt(signature, key);
 
         return Arrays.equals(md5, decryptedMd5);
     }
