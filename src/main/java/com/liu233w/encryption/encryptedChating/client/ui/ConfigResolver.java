@@ -2,23 +2,23 @@ package com.liu233w.encryption.encryptedChating.client.ui;
 
 import com.liu233w.encryption.encryptedChating.cipher.RsaCipher;
 import com.liu233w.encryption.encryptedChating.client.core.ClientGlobalConfig;
+import com.liu233w.encryption.encryptedChating.client.core.ConnectionFactory;
+import com.liu233w.encryption.encryptedChating.securityConnection.SecurityConnection;
 import javafx.scene.paint.Color;
 import org.beryx.textio.TerminalProperties;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
 
-public class ConfigResolver {
+import java.io.IOException;
 
-    private ConnectionKind connectionKind;
+public class ConfigResolver {
 
     private String connectAddress;
 
     private int connectPort;
 
-    public ConnectionKind getConnectionKind() {
-        return connectionKind;
-    }
+    private SecurityConnection connection;
 
     public String getConnectAddress() {
         return connectAddress;
@@ -28,7 +28,11 @@ public class ConfigResolver {
         return connectPort;
     }
 
-    public void resolve() {
+    public SecurityConnection getConnection() {
+        return connection;
+    }
+
+    public void resolve() throws IOException {
         final TextIO textIO = TextIoFactory.getTextIO();
         final TextTerminal<?> terminal = textIO.getTextTerminal();
         final TerminalProperties<?> properties = terminal.getProperties();
@@ -52,6 +56,7 @@ public class ConfigResolver {
                 .read("Key Server Port");
         terminal.println();
 
+        ConnectionKind connectionKind;
         while (true) {
             connectionKind = textIO.newEnumInputReader(ConnectionKind.class)
                     .read("Select action");
@@ -79,6 +84,17 @@ public class ConfigResolver {
                     .withDefaultValue(true)
                     .read("Is that ok?");
             if (ok) break;
+        }
+
+        properties.setPromptColor("white");
+        terminal.println();
+
+        if (connectionKind == ConnectionKind.WaitForConnection) {
+            terminal.println("Waiting for connection...");
+            connection = ConnectionFactory.waitForConnection(connectPort);
+        } else {
+            terminal.println("Connecting...");
+            connection = ConnectionFactory.connectTo(connectAddress, connectPort);
         }
 
         textIO.dispose();
